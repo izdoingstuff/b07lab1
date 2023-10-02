@@ -22,13 +22,9 @@ public class Polynomial {
 
     public Polynomial(File file) throws Exception{
         Scanner scanfile = new Scanner(file);
-        Scanner line = scanfile.nextLine();
+        String line = scanfile.nextLine();
         line = line.replaceAll("-","+-");
         String [] linearray = line.split("\\+");
-        int counter = linearray.length;
-        if (linearray[0] == "") {
-            counter--;
-        }
         int [] exponent1 = new int[linearray.length];
         double [] coef1 = new double[linearray.length];
         for (int i = 0; i < linearray.length; i++) {
@@ -37,9 +33,15 @@ public class Polynomial {
                 if (curitem.length == 1) {
                     if (curitem[0] != "") {
                         coef1[i] = Double.parseDouble(curitem[0]);
+                        exponent1[i] = 0;
                     }
                 } else if(curitem[0] != "") {
-                    coef1[i] = Double.parseDouble(curitem[0]);
+                    double x = Double.parseDouble(curitem[0]);
+                    if (x == 0.0){
+                        continue;
+                    } else {
+                        coef1[i] = x;
+                    }
                     if (curitem[1] != "") {
                         exponent1[i] = Integer.parseInt(curitem[1]);
                     } else {
@@ -48,6 +50,10 @@ public class Polynomial {
                 }
             }
         }
+        Polynomial newpoly = (new Polynomial(coef1, exponent1)).clearup();
+        coef = newpoly.coef;
+        exponent = newpoly.exponent;
+        scanfile.close();
     }
 
     public Polynomial clearup() {
@@ -160,5 +166,24 @@ public class Polynomial {
             System.out.println(exponent[i]);
         }
         System.out.println("=====================");
+    }
+
+    public void saveToFile(String filename)throws Exception{
+        Polynomial sorted = this.clearup();
+        String savestring = "";
+        for (int i = 0; i < sorted.coef.length; i++) {
+            if (sorted.coef[i] >= 0.0 && i != 0) {
+                savestring = savestring + "+" + sorted.coef[i];
+
+            } else {
+                savestring = savestring + sorted.coef[i];
+            }
+            if (sorted.exponent[i] != 0) {
+                savestring = savestring + "x" + sorted.exponent[i];
+            }
+        }
+        PrintStream ps = new PrintStream(filename);
+        ps.println(savestring);
+        ps.close();
     }
 }

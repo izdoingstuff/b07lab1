@@ -1,5 +1,7 @@
+import java.io.File;
+
 public class Driver {
-    public static void main(String [] args) {
+    public static void main(String [] args) throws Exception {
         Polynomial p = new Polynomial();
         System.out.println(p.evaluate(3)); // should result in 0
         double [] c1 = {6,0,0,5};
@@ -21,6 +23,10 @@ public class Driver {
         }
         Polynomial m = p1.multiply(p2);
         // m.printpoly();
-        System.out.println(m.evaluate(2)); //should be -860
+        m.saveToFile("try1.txt");
+        File file = new File("try1.txt");
+        Polynomial n = new Polynomial(file);
+        n = n.add(p2);
+        System.out.println(n.evaluate(2)); //should be -870
     }
 }
